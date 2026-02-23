@@ -15,7 +15,7 @@ async function generarCotizacionFinal() {
     if (resp.success) {
         renderizarTablasEspejo(resp.quote);
     } else {
-        showError("Errores de Credenciales en la Cotización", resp.messages);
+        showError("Errores de Credenciales en la Cotización", resp.message);
     }
 }
 async function postJson(url, data) {
@@ -80,6 +80,7 @@ function renderizarTablasEspejo(quote) {
                 <div class="text-[10px] text-gray-500 leading-tight">
                     * Validez: 15 días hábiles<br>
                     * Precios incluyen IVA
+                    * <small>Descuento: ${quote.descuento*100}%</small>
                 </div>
                 <div class="text-right">
                     <p class="text-[10px] text-gray-400 uppercase font-bold">Total Final</p>
@@ -143,7 +144,9 @@ function renderizarHistorial(quotes) {
                                 </td>
                             </tr>
                         `).join('')}
+                        
                     </tbody>
+                    <small>Descuento: ${quote.descuento*100}%</small>
                 </table>
             </div>
 
@@ -155,6 +158,7 @@ function renderizarHistorial(quotes) {
             </div>
         </div>
         `
+        
         historialContainer.insertAdjacentHTML('beforeend', html);
     }
   

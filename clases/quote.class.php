@@ -26,7 +26,8 @@ class Quote {
                 "items"     => $this->items,
                 "total"     => $this->total,
                 "itemsCount"=> $this->cantidadTotal,
-                "fecha"     => date("Y-m-d H:i:s")
+                "fecha"     => date("Y-m-d H:i:s"),
+                "descuento" => self::calcularDescuento($this->total)
             ];
             return true;
         }

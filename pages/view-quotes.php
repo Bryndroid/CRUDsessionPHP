@@ -90,7 +90,7 @@
         </div>
     </main>
     <script>
-        const quotesSession = <?php echo json_encode($arr_session); ?>;
+       const quotesSession = <?php echo json_encode(array_values($arr_session)); ?>;
     </script>
     <div id="error-modal" class=" hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
         <div class="w-full max-w-md bg-[#e9a1349f] rounded-2xl shadow-[0_0_40px_rgba(239,68,68,0.25)] border border-red-500/30 overflow-hidden">
