@@ -1,16 +1,32 @@
 
 async function generarCotizacionFinal() {
-    const nombre = document.getElementById('clienteNombre').value;
-    const email = document.getElementById('clienteEmail').value;
+    const nombre = document.getElementById('clienteNombre').value.trim();
+    const email  = document.getElementById('clienteEmail').value.trim();
 
+    const regexNombre = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+    const regexEmail  = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    // Campo vacío
     if (!nombre || !email) {
-        showError("Errores de Credenciales", "Por favor completa correctamente el campo");
+        showError("Errores de Credenciales", "Todos los campos son obligatorios.");
+        return;
+    }
+
+    // Validar nombre
+    if (!regexNombre.test(nombre)) {
+        showError("Nombre inválido", "El nombre solo puede contener letras y espacios.");
+        return;
+    }
+
+    // Validar email
+    if (!regexEmail.test(email)) {
+        showError("Correo inválido", "Ingresa un correo electrónico válido.");
         return;
     }
 
     // Usamos tu función existente para enviar al endpoint
     const cliente = { nombre, email };
-    const resp = await postJson('../api/process-quote.php', cliente);
+    const resp = await postJson('../routes/process-quote.php', cliente);
 
     if (resp.success) {
         renderizarTablasEspejo(resp.quote);
@@ -89,6 +105,7 @@ function renderizarTablasEspejo(quote) {
             </div>
         </div>
         `;
+        console.log(quote);
         container.insertAdjacentHTML('beforeend', html);
     }
 }
@@ -175,7 +192,7 @@ function showError(titulo, mensaje) {
         bodyEl.textContent = mensaje;
         
         modal.classList.remove('hidden');
-        // Bloqueamos el scroll del body para que el usuario se enfoque en el error
+        // Bloqueamos el scroll del body para que el usuar  nfoque en el error
         document.body.style.overflow = 'hidden'; 
     }
 }

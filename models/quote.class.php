@@ -1,4 +1,5 @@
 <?php
+//Ahora estos son Modelos, entonces estas clases deben de poder acceder a los datos en bd
 class Quote {
     private $codigo;
     private $subtotal = 0;
@@ -27,7 +28,7 @@ class Quote {
                 "total"     => $this->total,
                 "itemsCount"=> $this->cantidadTotal,
                 "fecha"     => date("Y-m-d H:i:s"),
-                "descuento" => self::calcularDescuento($this->total)
+                "descuento" => self::calcularDescuento($this->cantidadTotal)
             ];
             return true;
         }
@@ -65,7 +66,7 @@ class Quote {
         return "COT-" . date("Y") . "-" . str_pad(rand(1, 999), 3, "0", STR_PAD_LEFT);
     }
     static function validarMonto($monto){
-        if($monto > 100000 ){
+        if($monto > 10000 ){
             return false;
         }else if($monto < 0){
             return false;

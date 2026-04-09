@@ -59,7 +59,7 @@ async function postJson(url, data) {
 
 // agrega un servicio al carrito de sesión
 async function addToCart(id) {
-    const resp = await postJson('api/add-to-cart.php', { id });
+    const resp = await postJson('../routes/add-to-cart.php', { id });
     console.log(resp);
     if(resp.success){
         refreshCart(resp);
@@ -70,7 +70,7 @@ async function addToCart(id) {
 
 // modifica la cantidad de un servicio
 async function updateCart(id, cantidad) {
-    const resp = await postJson('api/update-cart.php', { id, cantidad });
+    const resp = await postJson('../routes/update-cart.php', { id, cantidad });
     console.log(resp);
     if(resp.success){
         refreshCart(resp);
@@ -82,7 +82,7 @@ async function updateCart(id, cantidad) {
 
 // elimina un servicio del carrito
 async function removeFromCart(id) {
-    const resp = await postJson('api/remove-from-cart.php', { id });
+    const resp = await postJson('../routes/remove-from-cart.php', { id });
     console.log(resp);
     if(resp.success){
         refreshCart(resp);
@@ -95,7 +95,7 @@ async function removeFromCart(id) {
 
 // genera la cotización enviando los datos del cliente
 async function processQuote(cliente) {
-    const resp = await postJson('api/process-quote.php', cliente);
+    const resp = await postJson('../routes/process-quote.php', cliente);
     console.log(resp);
     if(resp.success){
         refreshCart(resp);
@@ -105,7 +105,7 @@ async function processQuote(cliente) {
 
 }
 async function getCart(){
-    const resp =  await fetch("api/get-service.php");
+    const resp =  await fetch("../routes/get-service.php");
     return resp.json();
 }
 
@@ -210,7 +210,7 @@ async function view_Quotes() {
         
         return;
     }else{
-        window.location.href = "./pages/view-quotes.php";
+        window.location.href = "../../../views/view-quotes.php";
     }
 
    

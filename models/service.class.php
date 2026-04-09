@@ -1,5 +1,5 @@
 <?php
-
+//Ahora estos son Modelos, entonces estas clases deben de poder acceder a los datos en bd
     require_once(__DIR__."/../db/services.db.php");
 //Voy a guardar cosos Service dentro del Session xd
 class Service implements JsonSerializable{

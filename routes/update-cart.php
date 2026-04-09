@@ -1,4 +1,5 @@
 <?php
+//Se va a reducir codigo en estas rutas, para que ahora ese codigo sea manejado dentro de los controladores!
 // update-cart.php
 // ---------------------------------------------------------------
 // Ajusta la cantidad de un servicio ya presente en el carrito de la
@@ -9,8 +10,8 @@
 //    cantidad -> entero
 // Respuesta: JSON con carrito y totales como en add-to-cart.
 // ---------------------------------------------------------------
-require_once __DIR__ . '/../clases/service.class.php';
-require_once __DIR__ . '/../clases/quote.class.php';
+require_once __DIR__ . '/../models/service.class.php';
+require_once __DIR__ . '/../models/quote.class.php';
 session_start();
 header('Content-Type: application/json');
 

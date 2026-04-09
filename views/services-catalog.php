@@ -1,5 +1,5 @@
 <?php
-    require_once "./db/services.db.php";
+    require_once __DIR__."/../db/services.db.php";
 
     $arr_cate = json_decode(datos_bd, true)["categorias"];
     $length =  count($arr_cate);

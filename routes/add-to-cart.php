@@ -1,4 +1,6 @@
 <?php
+
+//Se va a reducir codigo en estas rutas, para que ahora ese codigo sea manejado dentro de los controladores!
 // add-to-cart.php
 // ------------------------------------------------------------------
 // Este endpoint recibe el identificador de un servicio y lo añade al
@@ -19,8 +21,8 @@
 // ------------------------------------------------------------------
 
 
-require_once __DIR__ . '/../clases/service.class.php';
-require_once __DIR__ . '/../clases/quote.class.php';
+require_once __DIR__ . '/../models/service.class.php';
+require_once __DIR__ . '/../models/quote.class.php';
 session_start();
 header('Content-Type: application/json');
 
@@ -89,3 +91,17 @@ echo json_encode([
         "descuento" => Quote::calcularDescuento($count)
     ]);
     exit;
+
+
+    //PRUEBA JSON EN FETCH
+
+    //fet('http://localhost/crudsessionphp/api/add-to-cart.php', {method: 'POST', headers: {'Content-Type': 'application/json'}body:JSON.stringfy({})'}'})
+
+
+    //fetch('http://localhost/crudsessionphp/api/update-cart.php', {
+   /*  method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: "svc01", cantidad: 3 })
+})
+.then(res => res.json())
+.then(data => console.log(data)); */

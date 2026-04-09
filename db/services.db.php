@@ -1,4 +1,5 @@
 <?php
+//Esto debe de ser cambiado, ya que ahora la bd va a ser conectada a una de MySQL
 const datos_bd = '{
         "categorias": [
             {

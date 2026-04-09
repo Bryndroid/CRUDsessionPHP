@@ -31,7 +31,7 @@
             
         </section>
     </header>
-    <?php require_once "./pages/services-catalog.php" ?>
+    <?php require_once __DIR__ . "/../views/services-catalog.php" ?>
     
 </body>
 </html>

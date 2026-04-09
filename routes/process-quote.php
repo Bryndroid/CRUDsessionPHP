@@ -1,4 +1,5 @@
 <?php
+//Se va a reducir codigo en estas rutas, para que ahora ese codigo sea manejado dentro de los controladores!
 // process-quote.php
 // ---------------------------------------------------------------
 // Este endpoint transforma el contenido del carrito en una cotización
@@ -12,8 +13,8 @@
 // datos de contacto. Genera un id aleatorio para la cotización, guarda
 // toda la información en $_SESSION['quote'] y devuelve el objeto.
 // ---------------------------------------------------------------
-    require_once __DIR__ . '/../clases/service.class.php';
-    require_once __DIR__.'/../clases/quote.class.php';
+    require_once __DIR__ . '/../models/service.class.php';
+    require_once __DIR__.'/../models/quote.class.php';
     session_start();
     header('Content-Type: application/json');
 
@@ -48,5 +49,5 @@
     // devolver la cotización creada
     echo json_encode([
         "success" => false,
-        "quote"   => "Error al crear la cotización. Datos invalidos"
+        "message"   => "Error al crear la cotización. Datos invalidos"
     ]);

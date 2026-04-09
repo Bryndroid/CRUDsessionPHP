@@ -1,4 +1,5 @@
 <?php
+//Se va a reducir codigo en estas rutas, para que ahora ese codigo sea manejado dentro de los controladores!
 // remove-from-cart.php
 // ---------------------------------------------------------------
 // Endpoint para borrar un servicio del carrito. Este script no tiene
@@ -11,8 +12,8 @@
 // La salida es un JSON con el objeto completo del carrito y los
 // totales recalculados.
 // ---------------------------------------------------------------
-require_once __DIR__ . '/../clases/service.class.php';
-require_once __DIR__ . '/../clases/quote.class.php';
+require_once __DIR__ . '/../models/service.class.php';
+require_once __DIR__ . '/../models/quote.class.php';
 session_start();
 header('Content-Type: application/json');
 
