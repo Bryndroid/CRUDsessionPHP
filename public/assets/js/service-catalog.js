@@ -5,42 +5,17 @@
    a los endpoints PHP y actualizar la interfaz con la información
    devuelta por el servidor.
    ------------------------------------------------------------------ */
-
-var services_bd;
+//TODO: PENDIENTE DE REFACTORIZAR
 document.addEventListener("DOMContentLoaded", async function () {
+    await renderServices();
     services = await getCart();
     if(services != null || services != undefined){
-        services_bd = services;
         refreshCart(services);
     }
 });
+
 // acceso rápido al modal de carrito
 const cartModal = document.getElementById('cart-modal');
-
-// funciones utilitarias para mostrar/ocultar el modal
-function openCart() {
-    cartModal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden'; // evitar scroll de fondo
-}
-
-function closeCart() {
-    cartModal.classList.add('hidden');
-    document.body.style.overflow = 'auto';
-}
-
-// cerrar modal si se hace clic fuera de él
-window.onclick = function(event) {
-    if (event.target == cartModal) {
-        closeCart();
-    }
-}
-
-// cerrar con la tecla Escape
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && !cartModal.classList.contains('hidden')) {
-        closeCart();
-    }
-});
 
 // ------------------------------------------------------------------
 // funciones que llaman a los endpoints AJAX. Todas usan postJson para
@@ -109,6 +84,53 @@ async function getCart(){
     return resp.json();
 }
 
+
+// funciones utilitarias para mostrar/ocultar el modal
+function openCart() {
+    cartModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // evitar scroll de fondo
+}
+
+function closeCart() {
+    cartModal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// ------------------------------------------------------------------
+// delegación de eventos dentro del modal para manejar aumentos,
+// disminuciones y eliminación sin necesidad de reañadir listeners.
+// ------------------------------------------------------------------
+
+cartModal.addEventListener('click', (e) => {
+    const action = e.target.closest('button')?.dataset.action;
+    const id = e.target.closest('button')?.dataset.id;
+    if (!action || !id) return;
+
+    if (action === 'remove') {
+        removeFromCart(id);
+    } else if (action === 'increase' || action === 'decrease') {
+        const input = e.target.closest('.flex').querySelector('input');
+        let qty = parseInt(input.value, 10);
+        qty += action === 'increase' ? 1 : -1;
+        if (qty < 1) { removeFromCart(id); return; }
+        updateCart(id, qty);
+    }
+});
+
+// cerrar modal si se hace clic fuera de él
+window.onclick = function(event) {
+    if (event.target == cartModal) {
+        closeCart();
+    }
+}
+
+// cerrar con la tecla Escape
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !cartModal.classList.contains('hidden')) {
+        closeCart();
+    }
+});
+
 // ------------------------------------------------------------------
 // actualiza la interfaz con los datos del carrito devueltos por el
 // servidor. Crea los elementos HTML para cada ítem y rellena totales.
@@ -136,7 +158,7 @@ function refreshCart(data) {
             div.innerHTML = `
                 <div class="flex-1">
                         <h3 class="text-gray-100 font-medium">${item.servicio.nombre}</h3>
-                        <p class="text-[#F08A5D] font-semibold">$${item.servicio.precio.toFixed(2)}</p>
+                        <p class="text-[#F08A5D] font-semibold">$${parseInt(item.servicio.precio).toFixed(2)}</p>
                     </div>
                     <div class="flex items-center gap-4">
                         <div class="flex items-center bg-[#241535] rounded-lg border border-white/10 overflow-hidden">
@@ -152,7 +174,7 @@ function refreshCart(data) {
                     </div>`;
             container.appendChild(div);
     }
-    console.log(data.descuento);
+   
     if(data.descuento != 0){
                 document.querySelector("#desc-text").innerHTML = "Descuento aplicado: " + data.descuento*100 + "%";
             }else{
@@ -160,42 +182,55 @@ function refreshCart(data) {
             }
 }
 
-// ------------------------------------------------------------------
-// delegación de eventos dentro del modal para manejar aumentos,
-// disminuciones y eliminación sin necesidad de reañadir listeners.
-// ------------------------------------------------------------------
 
-cartModal.addEventListener('click', (e) => {
-    const action = e.target.closest('button')?.dataset.action;
-    const id = e.target.closest('button')?.dataset.id;
-    if (!action || !id) return;
+// renderiza los servicios desde la base de datos
 
-    if (action === 'remove') {
-        removeFromCart(id);
-    } else if (action === 'increase' || action === 'decrease') {
-        const input = e.target.closest('.flex').querySelector('input');
-        let qty = parseInt(input.value, 10);
-        qty += action === 'increase' ? 1 : -1;
-        if (qty < 1) { removeFromCart(id); return; }
-        updateCart(id, qty);
-    }
-});
-
+async function renderServices() {
+    const services = await fetch('../routes/render-service.php').then(r => r.json());
+    console.log(services);
+    const container = document.querySelector('#service-container');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    const catIcons = {'fis01': 'person-military-rifle', 'ele02': 'building-shield', 'saf03': 'shield-heart'};
+    const catBgs = {'fis01': '#f0625dc0', 'ele02': '#5d7ff0c0', 'saf03': '#8cf05dc0'};
+   
+    
+    services.forEach(srv => {
+        const div = document.createElement('div');
+        div.className = 'cart-serv w-[290px] min-h-[160px] h-fit text-center bg-[#2f0c68] rounded-sm relative flex flex-col justify-between';
+        div.dataset.categoria = `${srv.categoria}`;
+        div.innerHTML = `
+            <div>
+                <h3 class="text-xl font-semibold text-[#ffffff] p-2">${srv.nombre}</h3>
+                <p class="p-2 text-sm">${srv.descripcion}</p>
+                <span class="text-sm text-[#940c0c]">$${srv.precio}</span>
+            </div>
+            <div class="w-full bg-[#d6c2fc] rounded-b-xl p-2 flex justify-center items-center">
+                <button class="btn-serv block bg-[#F08A5D] pt-1 pb-1 pl-3 pr-3 font-semibold text-center rounded-2xl text-[#240a55] w-[180px] transition-all hover:text-white hover:cursor-pointer hover:bg-[#45188b]" data-add-id="${srv.id}">Añadir al carro</button>
+            </div>
+            <div class="absolute left-[100%] bottom-[75%] bg-[${catBgs[srv.categoria]}] rounded-r-xl">
+                <i class="fa-solid fa-${catIcons[srv.categoria]} text-[20px] pt-2 pb-2"></i>
+            </div>`;
+        container.appendChild(div);
+    });
+    cards = document.querySelectorAll(".cart-serv");
 // ------------------------------------------------------------------
 // detectar clicks en botones "Añadir al carro" que genera PHP mediante
 // data-add-id en las tarjetas de servicio.
 // ------------------------------------------------------------------
-let btnserv =  document.querySelectorAll(".btn-serv");
-btnserv.forEach(t=>{
-    t.addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-add-id]');
-        if (btn) {
-            const id = btn.dataset.addId;
-            addToCart(id);
-        }
-    });
-})
+    let btnserv =  document.querySelectorAll(".btn-serv");
+    btnserv.forEach(t=>{
+        t.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-add-id]');
+            if (btn) {
+                const id = btn.dataset.addId;
+                addToCart(id);
+            }
+        });
+    })
 
+}
 
 // si se desea, al cargar la página se puede consultar el estado actual
 // del carrito en la sesión (aunque inicialmente normalmente estará vacío)
@@ -210,11 +245,12 @@ async function view_Quotes() {
         
         return;
     }else{
-        window.location.href = "../../../views/view-quotes.php";
+        window.location.href = "/desafio-php-1/CRUDsessionPHP/views/view-quotes.php";
     }
 
    
 }
+
 
 let btnCates = document.querySelectorAll(".btn-cat");
 let cards = document.querySelectorAll(".cart-serv");
@@ -222,10 +258,11 @@ let cards = document.querySelectorAll(".cart-serv");
 btnCates.forEach(btn => {
     btn.addEventListener("click", () => {
         const categoriaSeleccionada = btn.dataset.addId;
-
+        
         cards.forEach(card => {
+            
             //Para evitar el btn todos
-            if (!categoriaSeleccionada || card.dataset.category === categoriaSeleccionada) {
+            if (!categoriaSeleccionada || card.dataset.categoria === categoriaSeleccionada) {
                 card.classList.remove('hidden');
             } else {
                 card.classList.add('hidden');

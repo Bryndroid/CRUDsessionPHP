@@ -10,8 +10,7 @@
 //    cantidad -> entero
 // Respuesta: JSON con carrito y totales como en add-to-cart.
 // ---------------------------------------------------------------
-require_once __DIR__ . '/../models/service.class.php';
-require_once __DIR__ . '/../models/quote.class.php';
+require_once __DIR__ . "/../controllers/CartController.php";
 session_start();
 header('Content-Type: application/json');
 
@@ -31,32 +30,5 @@ if (!isset($_SESSION['cart'][$id])) {
     exit;
 }
 
-// si la cantidad solicitada es 0 o negativa, eliminamos el ítem
-if ($cantidad < 1) {
-    unset($_SESSION['cart'][$id]);
-} else {
-    $_SESSION['cart'][$id]['cantidad'] = $cantidad;
-    if($_SESSION['cart'][$id]['cantidad'] > $_SESSION['cart'][$id]['servicio']["stock"]){
-        $_SESSION['cart'][$id]['cantidad'] -= 1;
-        echo json_encode(["success" => false, "message" => "Limite de stock"]);
-        exit;
-    }
-}
-
-// recalcular totales para la respuesta
-$total = 0;
-$count = 0;
-foreach ($_SESSION['cart'] as $item) {
-    $total += $item['servicio']["precio"] * $item['cantidad'];
-    $count += $item['cantidad'];
-}
-
-$total =  $total - $total*Quote::calcularDescuento($count);
-echo json_encode([
-        "success" => true,
-        "cart"    => $_SESSION['cart'],
-        "total"   => $total,
-        "items"   => $count,
-        "descuento" => Quote::calcularDescuento($count)
-    ]);
-    exit;
+$cartController =  new CartController($id);
+$cartController->patchService($cantidad);

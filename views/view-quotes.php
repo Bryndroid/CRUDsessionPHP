@@ -1,10 +1,16 @@
 <?php session_start(); 
-
-    if(isset($_SESSION["quotes"])){
-        $arr_session = $_SESSION["quotes"];
-    }else{
+    require_once __DIR__. "/../helpers/Auth.php";
+    require_once __DIR__ . '/../models/quote.class.php';
+    require_once __DIR__ . "/../config/services.db.php";
+     require_once __DIR__ . '/../controllers/AuthController.php';
+    
+    if(isAuthenticated()){
+        $arr_session = Quote::obtenerCotizaciones($conn, $_SESSION["user_id"]);
+    }
+    else{
         $arr_session = [];
     }
+
 ?>
 
 <!DOCTYPE html>
@@ -14,7 +20,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CA Security</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="../assets/css/service-catalog.css">
+    <link rel="stylesheet" href="../public/assets/css/service-catalog.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body class = "bg-[#241535] bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')] text-white ">
@@ -43,13 +49,13 @@
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="flex flex-col gap-2">
-                    <label class="text-xs text-gray-400 ml-1">Nombre Completo</label>
-                    <input type="text" id="clienteNombre" placeholder="Ej. Bryan Fuentes" 
+                    <label class="text-xs text-gray-400 ml-1">Empresa</label>
+                    <input type="text" id="clienteEmpresa" placeholder="Ej. Pochoclo.inc" 
                         class="bg-[#1a1025] border border-white/10 p-3 rounded-lg focus:outline-none focus:border-[#F08A5D] transition-all text-white">
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label class="text-xs text-gray-400 ml-1">Correo Electrónico</label>
-                    <input type="email" id="clienteEmail" placeholder="contacto@ejemplo.com" 
+                    <label class="text-xs text-gray-400 ml-1">Num. Telefono Asociado</label>
+                    <input type="text" id="clienteTelefono" placeholder="+503 12345-6785"  pattern="^\+\d{1,3}\s\d{4}-\d{4}$"
                         class="bg-[#1a1025] border border-white/10 p-3 rounded-lg focus:outline-none focus:border-[#F08A5D] transition-all text-white">
                 </div>
             </div>
@@ -121,6 +127,6 @@
     <section class ="">
 
     </section>
-    <script src ="../assets/js/quote.js"></script>
+    <script src ="../public/assets/js/quote.js"></script>
 </body>
 </html>

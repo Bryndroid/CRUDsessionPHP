@@ -12,10 +12,10 @@
 // La salida es un JSON con el objeto completo del carrito y los
 // totales recalculados.
 // ---------------------------------------------------------------
-require_once __DIR__ . '/../models/service.class.php';
-require_once __DIR__ . '/../models/quote.class.php';
+require_once __DIR__ . "/../controllers/CartController.php";
 session_start();
 header('Content-Type: application/json');
+
 
 $input = json_decode(file_get_contents('php://input'), true);
 $id = $input['id'] ?? null;
@@ -25,28 +25,8 @@ if (!$id) {
     echo json_encode(["success" => false, "message" => "ID de servicio requerido"]);
     exit;
 }
+$cartController = new CartController($id);
 
-// si el ítem está en el carrito, lo borramos
-if (isset($_SESSION['cart'][$id])) {
-    unset($_SESSION['cart'][$id]);
-}
-
-// recalcultar totales tras la modificación
-$total = 0;
-$count = 0;
-
-foreach ($_SESSION['cart'] ?? [] as $item) {
-    $total += $item['servicio']['precio'] * $item['cantidad'];
-    $count += $item['cantidad'];
-}
-
-$total =  $total - $total*Quote::calcularDescuento($count);
-echo json_encode([
-        "success" => true,
-        "cart"    => $_SESSION['cart'],
-        "total"   => $total,
-        "items"   => $count,
-        "descuento" => Quote::calcularDescuento($count)
-    ]);
+$cartController->removeService();
 
 

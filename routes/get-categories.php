@@ -1,21 +1,20 @@
 <?php
+require_once __DIR__ . '/../models/service.class.php';
 
-session_start();
 header('Content-Type: application/json');
 
 try {
-    // Destruir la sesión
-    session_destroy();
+    $categorias = Service::obtenerCategorias();
 
     echo json_encode([
         'success' => true,
-        'message' => 'Sesión cerrada exitosamente'
+        'categorias' => $categorias
     ]);
 
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Error al cerrar sesión: ' . $e->getMessage()
+        'message' => $e->getMessage()
     ]);
 }

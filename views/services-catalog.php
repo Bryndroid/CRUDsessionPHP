@@ -1,8 +1,5 @@
 <?php
-    require_once __DIR__."/../db/services.db.php";
-
-    $arr_cate = json_decode(datos_bd, true)["categorias"];
-    $length =  count($arr_cate);
+    require_once __DIR__."/../controllers/AuthController.php";
 ?>
 
     <main class ="w-full mt-10 pr-4 pl-4 flex flex-col justify-center items-center">
@@ -78,54 +75,20 @@
                         <div class ="all-cards p-2 w-fit h-fit text-center text-[13px] rounded-xl text-[#fff] bg-[#F08A5D] font-semibold hidden sm:block">
                             <p class = "hidden sm:block">Todos</p>
                         </div>
+                        <!--TODO: evitar que este hardcodeado-->
                         <div class ="btn-cat p-2 w-fit h-fit text-center text-[13px] rounded-xl text-[#fff] bg-[#f0625dc0] font-semibold whitespace-nowrap cursor-pointer
-                        " data-add-id = "cat01">
+                        " data-add-id = "fis01">
                             <p class ="flex justify-center items-center"><i class="fa-solid fa-person-military-rifle"></i> <span class = "hidden md:block">Seguridad Física</span> </p>
                         </div>
-                        <div class ="btn-cat p-2 w-fit h-fit text-center text-[13px]  text-sm rounded-xl text-[#fff] bg-[#5d7ff0c0] font-semibold whitespace-nowrap cursor-pointer" data-add-id = "cat02">
+                        <div class ="btn-cat p-2 w-fit h-fit text-center text-[13px]  text-sm rounded-xl text-[#fff] bg-[#5d7ff0c0] font-semibold whitespace-nowrap cursor-pointer" data-add-id = "ele02">
                            <p class ="flex justify-center items-center"><i class="fa-solid fa-building-shield"></i> <span class = "hidden md:block">Seguridad Eletrónica</span> </p>
                         </div>
-                        <div class ="btn-cat p-2 w-fit h-fit text-center text-[13px]  text-sm rounded-xl text-[#fff] bg-[#8cf05dc0] font-semibold whitespace-nowrap cursor-pointer" data-add-id = "cat03">
+                        <div class ="btn-cat p-2 w-fit h-fit text-center text-[13px]  text-sm rounded-xl text-[#fff] bg-[#8cf05dc0] font-semibold whitespace-nowrap cursor-pointer" data-add-id = "saf03">
                            <p class ="flex justify-center items-center"><i class="fa-solid fa-shield-heart"></i> <span class = "hidden md:block">Safety & Utilities</span> </p>
                         </div>
                     </section>
-                    <section class ="bg-[#1d0931] bg-[url('https://www.transparenttextures.com/patterns/pinstriped-suit.png')] z-[100000] p-6 h-full rounded-lg flex gap-20 flex-wrap shadow-[0_0_20px_rgba(168,85,247,0.5)]">
-                        <!--Carta-->
-                        <!--Este va a ser por categorias-->
-                        <?php for($i = 0; $i < $length; $i++ ):?>
-                            <?php for($j = 0; $j < count($arr_cate[$i]["servicios"]); $j++):?>
-                                <div class="cart-serv w-[290px] min-h-[160px] h-fit text-center bg-[#2f0c68] rounded-sm relative flex flex-col justify-between"     data-category="cat0<?= ($i + 1) ?>">
-
-                                    <div class ="">
-                                        <h3 class = "text-xl font-semibold text-[#ffffff] p-2"><?= $arr_cate[$i]["servicios"][$j]["nombre"] ?></h3>
-
-                                    <p class = "p-2 text-sm"><?= $arr_cate[$i]["servicios"][$j]["descripcion"] ?></p>
-
-                                    <span class = "text-sm text-[#940c0c]">$<?= $arr_cate[$i]["servicios"][$j]["precio_base"] ?></span>
-                                    </div>
-                                    <div class ="w-full bg-[#d6c2fc] rounded-b-xl p-2 flex justify-center items-center">
-                                            <button class = "btn-serv block  bg-[#F08A5D] pt-1 pb-1 pl-3 pr-3 font-semibold text-center rounded-2xl text-[#240a55] w-[180px] transition-all hover:text-white hover:cursor-pointer hover:bg-[#45188b]" data-add-id="<?= $arr_cate[$i]["servicios"][$j]["id"] ?>">
-                                            Añadir al carro
-                                        </button>
-                                    </div>
-                                    
-                                        <?php if($i ==0 ): ?>
-                                            <div class ="absolute left-[100%] bottom-[75%] bg-[#f0625dc0] rounded-r-xl">
-                                                <i class="fa-solid fa-person-military-rifle text-[20px] pt-2 pb-2" ></i>
-                                            </div>
-                                        <?php elseif($i ==1): ?>
-                                            <div class ="absolute left-[100%] bottom-[75%] bg-[#5d7ff0c0] rounded-r-xl">
-                                                <i class="fa-solid fa-building-shield text-[20px] pt-2 pb-2"></i>
-                                            </div>
-                                        <?php else: ?>
-                                            <div class ="absolute left-[100%] bottom-[75%] bg-[#8cf05dc0] rounded-r-xl">
-                                                <i class="fa-solid fa-user-shield text-[20px] pt-2 pb-2"></i>
-                                            </div>
-                                        <?php endif ?>
-                                        
-                                </div>
-                            <?php endfor; ?>
-                        <?php endfor; ?>
+                    <section id = "service-container" class ="bg-[#1d0931] bg-[url('https://www.transparenttextures.com/patterns/pinstriped-suit.png')] z-[100000] p-6 h-full rounded-lg flex gap-20 flex-wrap shadow-[0_0_20px_rgba(168,85,247,0.5)]">
+                        <!--Los servicios se cargarán aquí dinámicamente con JavaScript-->
                         <div class ="w-full bg-[#0000003a] rounded-3xl text-center">
                             <small class ="italic">Los precios son sin contar IVA</small><br>
                             <small class ="italic">Descuentos por: 3-5 servicios = 8%, 6-9 servicios = 12%, 10+ servicios = 18%</small>
@@ -134,39 +97,8 @@
                 </section>
         </section>
     </main>
-
-     <div id="cart-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-        <div class="w-full max-w-lg bg-[#241535]  h-fit rounded-2xl shadow-2xl border border-white/5 overflow-hidden">
-            
-            <div class="bg-[#1a1025] px-6 py-4 flex justify-between items-center border-b border-white/10">
-                <div>
-                    <h2 class="text-[#F08A5D] text-xl font-bold tracking-tight">Tu Carrito</h2>
-                    <p class="text-xs text-gray-400">Tienes <span id="cart-counter" class="text-[#F08A5D]"></span> servicios</p>
-                </div>
-                <button class="text-gray-400 hover:text-white transition-colors text-2xl" onclick="closeCart()">&times;</button>
-            </div>
-
-                <div class="max-h-[450px] overflow-y-auto p-6 space-y-4" id="cart-items-list">
-                    
-                
-                </div>
-
-            <div class="bg-[#1a1025] p-6 border-t border-white/10">
-                <div class="flex justify-between items-center mb-6">
-                    <span class="text-gray-400 text-lg">Total estimado:</span>
-                    <span id ="desc-text"class = "text-yellow-300 text-sm">Descuento aplicado: 10% </span>
-                    <span id="cart-total" class="text-2xl font-bold text-white leading-none"></span>
-                </div>
-
-                <div class="grid grid-cols-3 gap-3">
-                    <button class="col-span-3 py-3 px-4 bg-[#F08A5D] hover:bg-[#e07a4d] text-[#1a1025] rounded-xl font-bold transition-all shadow-lg shadow-[#F08A5D]/10" onclick= "view_Quotes()">
-                        GENERAR COTIZACIÓN
-                    </button>
-                    <small class ="italic w-full">Los precios son sin contar IVA</small><br>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php require_once __DIR__."/cart.php";?>
+     
 
     <div id="error-modal" class=" hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
         <div class="w-full max-w-md bg-[#e9a1349f] rounded-2xl shadow-[0_0_40px_rgba(239,68,68,0.25)] border border-red-500/30 overflow-hidden">
