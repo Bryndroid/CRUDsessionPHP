@@ -1,8 +1,9 @@
 <?php
 //Se va a reducir codigo en estas rutas, para que ahora ese codigo sea manejado dentro de los controladores!
 
-require_once __DIR__ . "/../controllers/CartController.php";
-session_start();
+require_once __DIR__ . "/../../controllers/CartController.php";
+require_once __DIR__. '/../../helpers/secure.php';
+iniciarSesionSegura();
 header('Content-Type: application/json');
 try{
 

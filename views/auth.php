@@ -192,7 +192,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     const password = document.getElementById('loginPassword').value;
 
     try {
-        const response = await fetch('../routes/login-user.php', {
+        const response = await fetch('../routes/user/login-user.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -227,7 +227,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const confirm_password = document.getElementById('registerConfirmPassword').value;
 
     try {
-        const response = await fetch('../routes/register-user.php', {
+        const response = await fetch('../routes/user/register-user.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -264,7 +264,7 @@ function showUserModal(user) {
 
 async function logoutUser() {
     try {
-        const response = await fetch('../routes/logout-user.php', {
+        const response = await fetch('../routes/user/logout-user.php', {
             method: 'POST'
         });
 

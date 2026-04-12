@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../config/services.db.php';
 require_once __DIR__ . '/../models/User.php';
+require_once __DIR__. '/../helpers/secure.php';
 
 class AuthController {
     private $user;
@@ -79,7 +80,7 @@ class AuthController {
      * Cerrar sesión
      */
     public function logout() {
-        session_destroy();
+        cerrarSesionSegura();
         return [
             'success' => true,
             'message' => 'Sesión cerrada exitosamente'

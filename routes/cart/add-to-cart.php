@@ -22,9 +22,10 @@
 //   items    -> total de unidades
 // ------------------------------------------------------------------
 
-require_once __DIR__ . "/../controllers/CartController.php";
-require_once __DIR__. "/../helpers/Auth.php";
-session_start();
+require_once __DIR__ . "/../../controllers/CartController.php";
+require_once __DIR__. "/../../helpers/Auth.php";
+require_once __DIR__. '/../../helpers/secure.php';
+iniciarSesionSegura();
 header('Content-Type: application/json');
 try{
 

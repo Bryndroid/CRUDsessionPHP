@@ -36,6 +36,7 @@ function requireAdmin() {
     }
 }
 
+
 /**
  * Obtener el usuario actual
  */

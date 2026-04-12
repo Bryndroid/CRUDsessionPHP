@@ -48,7 +48,8 @@ class Service implements JsonSerializable{
             "descripcion" => $this->descripcion,
             "precio" => $this->precio,
             "categoria" => $this->categoria,
-            "stock" => $this->stock
+            "stock" => $this->stock,
+            "idCategoria" => $this->idCategoria
         ];
     }
     private function validar_Precio($precio_entrante){
@@ -185,6 +186,7 @@ class Service implements JsonSerializable{
 
         if ($stmt->execute()) {
             $nuevoId = $conn->insert_id;
+            $stmt->close();
             return new self($nuevoId, $nombre, $descripcion, $precio, $idCategoria);
         } else {
             throw new Exception("Error al crear el servicio: " . $stmt->error);
@@ -203,7 +205,10 @@ class Service implements JsonSerializable{
         $categorias = [];
         if($result->num_rows > 0){
             while ($row = $result->fetch_assoc()) {
-                $categorias[] = $row["Nombre"];
+                $categorias[] = [
+                    'id' => $row["IdCategoria"],
+                    'nombre' => $row["Nombre"]
+                ];
             }
         }
         return $categorias;
@@ -219,6 +224,85 @@ class Service implements JsonSerializable{
             'saf03' => 'Safety & Utilities'
         ];
         return $nombres[$codigo] ?? $codigo;
+    }
+
+    /**
+     * Actualizar un servicio existente
+     */
+    public static function actualizar($conn, $idServicio, $nombre, $descripcion, $precio, $idCategoria) {
+        // Validar categoría
+        $categoria = self::validarCategoria($idCategoria);
+        if ($categoria === null) {
+            throw new Exception("Categoría inválida");
+        }
+
+        // Validar datos
+        if (empty($nombre) || empty($descripcion) || !is_numeric($precio)) {
+            throw new Exception("Datos inválidos");
+        }
+
+        if ($precio <= self::precio_minimo || $precio >= self::precio_maximo) {
+            throw new Exception("El precio debe estar entre " . self::precio_minimo . " y " . self::precio_maximo);
+        }
+
+        // Actualizar en BD
+        $sql = "UPDATE servicios SET Nombre = ?, Descripcion = ?, Precio = ?, IdCategoria = ? WHERE IdServicio = ?";
+        $stmt = $conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Error en la preparación: " . $conn->error);
+        }
+
+        $stmt->bind_param("ssdii", $nombre, $descripcion, $precio, $idCategoria, $idServicio);
+
+        if ($stmt->execute()) {
+            $stmt->close();
+            return new self($idServicio, $nombre, $descripcion, $precio, $idCategoria);
+        } else {
+            throw new Exception("Error al actualizar el servicio: " . $stmt->error);
+        }
+    }
+
+    /**
+     * Eliminar un servicio
+     */
+    public static function eliminar($conn, $idServicio) {
+
+        // Verificar si no está en alguna cotizacion
+        $sql = "SELECT COUNT(*) FROM detallecotizacion WHERE IdServicio = ?";
+        $stmt = $conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Error en la preparación: " . $conn->error);
+        }
+
+        $stmt->bind_param("i", $idServicio);
+        $stmt->execute();
+        $total = 0;
+        $stmt->bind_result($total);
+        $stmt->fetch();
+        $stmt->close(); 
+
+        if ($total > 0) {
+            throw new Exception("Servicio ya existente en cotizacion.");
+        }
+
+        // Ahora sí puedes hacer otra query
+        $sql = "DELETE FROM servicios WHERE IdServicio = ?";
+        $stmt = $conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Error en la preparación: " . $conn->error);
+        }
+
+        $stmt->bind_param("i", $idServicio);
+
+        if ($stmt->execute()) {
+            $stmt->close();
+            return true;
+        } else {
+            throw new Exception("Error al eliminar el servicio: " . $stmt->error);
+        }
     }
 
 }

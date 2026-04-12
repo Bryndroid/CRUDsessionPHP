@@ -4,7 +4,7 @@ async function generarCotizacionFinal() {
     const empresa = document.querySelector("#clienteEmpresa").value;
 
     const cliente = { telefono, empresa };
-    const resp = await postJson('../routes/process-quote.php', cliente);
+    const resp = await postJson('../routes/quote/process-quote.php', cliente);
 
     if (resp.success) {
 

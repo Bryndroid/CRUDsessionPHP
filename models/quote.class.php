@@ -88,8 +88,12 @@ class Quote {
             $errores[] = "La cotización debe contener al menos un item";
         }
 
-        if ($this->Total <= 0 || $this->Total > self::PRECIO_MAXIMO) {
-            $errores[] = "El total debe estar entre 0 y " . self::PRECIO_MAXIMO;
+        if ($this->Total > self::PRECIO_MAXIMO) {
+            $errores[] = "Excede el maximo de cotiazcion. Maximo de cotización ". self::PRECIO_MAXIMO;
+        }
+
+        if($this->Total <= 0){
+            $errores[] = "Total invalido. Rehaga el proceso";
         }
 
         return $errores;

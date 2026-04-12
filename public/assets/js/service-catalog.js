@@ -5,7 +5,7 @@
    a los endpoints PHP y actualizar la interfaz con la información
    devuelta por el servidor.
    ------------------------------------------------------------------ */
-//TODO: PENDIENTE DE REFACTORIZAR
+
 document.addEventListener("DOMContentLoaded", async function () {
     await renderServices();
     services = await getCart();
@@ -34,7 +34,7 @@ async function postJson(url, data) {
 
 // agrega un servicio al carrito de sesión
 async function addToCart(id) {
-    const resp = await postJson('../routes/add-to-cart.php', { id });
+    const resp = await postJson('../routes/cart/add-to-cart.php', { id });
     console.log(resp);
     if(resp.success){
         refreshCart(resp);
@@ -45,7 +45,7 @@ async function addToCart(id) {
 
 // modifica la cantidad de un servicio
 async function updateCart(id, cantidad) {
-    const resp = await postJson('../routes/update-cart.php', { id, cantidad });
+    const resp = await postJson('../routes/cart/update-cart.php', { id, cantidad });
     console.log(resp);
     if(resp.success){
         refreshCart(resp);
@@ -57,7 +57,7 @@ async function updateCart(id, cantidad) {
 
 // elimina un servicio del carrito
 async function removeFromCart(id) {
-    const resp = await postJson('../routes/remove-from-cart.php', { id });
+    const resp = await postJson('../routes/cart/remove-from-cart.php', { id });
     console.log(resp);
     if(resp.success){
         refreshCart(resp);
@@ -70,7 +70,7 @@ async function removeFromCart(id) {
 
 // genera la cotización enviando los datos del cliente
 async function processQuote(cliente) {
-    const resp = await postJson('../routes/process-quote.php', cliente);
+    const resp = await postJson('../routes/quote/process-quote.php', cliente);
     console.log(resp);
     if(resp.success){
         refreshCart(resp);
@@ -80,7 +80,7 @@ async function processQuote(cliente) {
 
 }
 async function getCart(){
-    const resp =  await fetch("../routes/get-service.php");
+    const resp =  await fetch("../routes/cart/get-service.php");
     return resp.json();
 }
 
@@ -186,7 +186,7 @@ function refreshCart(data) {
 // renderiza los servicios desde la base de datos
 
 async function renderServices() {
-    const services = await fetch('../routes/render-service.php').then(r => r.json());
+    const services = await fetch('../routes/service/render-service.php').then(r => r.json());
     console.log(services);
     const container = document.querySelector('#service-container');
     if (!container) return;

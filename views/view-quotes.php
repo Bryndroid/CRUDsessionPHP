@@ -1,4 +1,6 @@
-<?php session_start(); 
+<?php 
+require_once __DIR__. '/../helpers/secure.php';
+iniciarSesionSegura();
     require_once __DIR__. "/../helpers/Auth.php";
     require_once __DIR__ . '/../models/quote.class.php';
     require_once __DIR__ . "/../config/services.db.php";

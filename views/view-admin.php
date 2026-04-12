@@ -162,7 +162,7 @@ try {
                                 <?php echo htmlspecialchars(substr($servicio->jsonSerialize()['descripcion'], 0, 120) . '...'); ?>
                             </p>
 
-                            <div class="space-y-2">
+                            <div class="space-y-2 mb-4">
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-400">Precio:</span>
                                     <span class="font-bold text-[#F08A5D]">
@@ -181,6 +181,21 @@ try {
                                         <?php echo htmlspecialchars($servicio->jsonSerialize()['categoria']); ?>
                                     </span>
                                 </div>
+                            </div>
+
+                            <div class="flex gap-2 pt-3 border-t border-[#F08A5D]/10">
+                                <button 
+                                    onclick="abrirModalEditar(<?php echo $servicio->jsonSerialize()['id']; ?>, '<?php echo htmlspecialchars($servicio->jsonSerialize()['nombre']); ?>', '<?php echo htmlspecialchars($servicio->jsonSerialize()['descripcion']); ?>', <?php echo $servicio->jsonSerialize()['precio']; ?>, <?php echo $servicio->jsonSerialize()['idCategoria']; ?>)"
+                                    class="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm font-semibold transition-all"
+                                >
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button 
+                                    onclick="eliminarServicio(<?php echo $servicio->jsonSerialize()['id']; ?>, '<?php echo htmlspecialchars($servicio->jsonSerialize()['nombre']); ?>')"
+                                    class="flex-1 bg-red-600 hover:bg-red-700 px-3 py-2 rounded text-sm font-semibold transition-all"
+                                >
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -251,6 +266,75 @@ try {
                     class="w-full bg-[#F08A5D] text-[#240a55] font-semibold py-2 rounded hover:bg-[#45188b] hover:text-white transition-all"
                 >
                     Crear Servicio
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Editar Servicio -->
+    <div id="editServiceModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-[#241535] rounded-lg shadow-lg w-full max-w-md p-8 border border-[#F08A5D]">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-[#F08A5D]">Editar Servicio</h2>
+                <button onclick="cerrarModalEditar()" class="text-gray-400 hover:text-[#F08A5D] text-2xl">×</button>
+            </div>
+
+            <form id="formEditService" onsubmit="actualizarServicio(event)" class="space-y-4">
+                <input type="hidden" id="servicioEditId" />
+
+                <div>
+                    <label class="block text-gray-300 mb-2 text-sm font-semibold">Nombre</label>
+                    <input 
+                        type="text" 
+                        id="servicioEditNombre" 
+                        required 
+                        class="w-full px-4 py-2 rounded bg-[#1a0f2e] border border-[#F08A5D] text-white focus:outline-none focus:ring-2 focus:ring-[#F08A5D]"
+                        placeholder="Nombre del servicio"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 mb-2 text-sm font-semibold">Descripción</label>
+                    <textarea 
+                        id="servicioEditDescripcion" 
+                        required 
+                        rows="3"
+                        class="w-full px-4 py-2 rounded bg-[#1a0f2e] border border-[#F08A5D] text-white focus:outline-none focus:ring-2 focus:ring-[#F08A5D]"
+                        placeholder="Descripción del servicio"
+                    ></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 mb-2 text-sm font-semibold">Precio ($)</label>
+                    <input 
+                        type="number" 
+                        id="servicioPrecioEdit" 
+                        required 
+                        step="0.01"
+                        min="100"
+                        max="10000"
+                        class="w-full px-4 py-2 rounded bg-[#1a0f2e] border border-[#F08A5D] text-white focus:outline-none focus:ring-2 focus:ring-[#F08A5D]"
+                        placeholder="100 - 10000"
+                    />
+                    <small class="text-gray-400">Rango: $100 - $10,000</small>
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 mb-2 text-sm font-semibold">Categoría</label>
+                    <select 
+                        id="servicioCategoriEdit" 
+                        required 
+                        class="w-full px-4 py-2 rounded bg-[#1a0f2e] border border-[#F08A5D] text-white focus:outline-none focus:ring-2 focus:ring-[#F08A5D]"
+                    >
+                        <option value="">Cargando categorías...</option>
+                    </select>
+                </div>
+
+                <button 
+                    type="submit"
+                    class="w-full bg-[#F08A5D] text-[#240a55] font-semibold py-2 rounded hover:bg-[#45188b] hover:text-white transition-all"
+                >
+                    Guardar Cambios
                 </button>
             </form>
         </div>

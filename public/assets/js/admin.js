@@ -9,7 +9,7 @@ async function eliminarCotizacion(idCotizacion, codigo) {
     }
 
     try {
-        const response = await fetch('../routes/delete-quote.php', {
+        const response = await fetch('../routes/quote/delete-quote.php', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -56,7 +56,7 @@ async function crearServicio(event) {
     }
 
     try {
-        const response = await fetch('../routes/add-service.php', {
+        const response = await fetch('../routes/service/add-service.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -83,23 +83,142 @@ async function crearServicio(event) {
     }
 }
 
+// Eliminar servicio
+async function eliminarServicio(idServicio, nombre) {
+    if (!confirm(`¿Estás seguro de que deseas eliminar el servicio "${nombre}"?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch('../routes/service/delete-service.php', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ idServicio })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert('Servicio eliminado exitosamente');
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    } catch (error) {
+        alert('Error al eliminar el servicio: ' + error.message);
+    }
+}
+
+// Abrir modal para editar servicio
+function abrirModalEditar(idServicio, nombre, descripcion, precio, idCategoria) {
+    document.getElementById('servicioEditId').value = idServicio;
+    document.getElementById('servicioEditNombre').value = nombre;
+    document.getElementById('servicioEditDescripcion').value = descripcion;
+    document.getElementById('servicioPrecioEdit').value = precio;
+    document.getElementById('servicioCategoriEdit').value = idCategoria;
+    
+    // Cargar categorías
+    cargarCategoriasEditar();
+    
+    document.getElementById('editServiceModal').classList.remove('hidden');
+}
+
+// Cerrar modal de editar
+function cerrarModalEditar() {
+    document.getElementById('editServiceModal').classList.add('hidden');
+    document.getElementById('formEditService').reset();
+}
+
+// Actualizar servicio
+async function actualizarServicio(event) {
+    event.preventDefault();
+
+    const idServicio = document.getElementById('servicioEditId').value;
+    const nombre = document.getElementById('servicioEditNombre').value.trim();
+    const descripcion = document.getElementById('servicioEditDescripcion').value.trim();
+    const precio = parseFloat(document.getElementById('servicioPrecioEdit').value);
+    const idCategoria = parseInt(document.getElementById('servicioCategoriEdit').value);
+
+    if (!nombre || !descripcion || !precio || !idCategoria) {
+        alert('Por favor completa todos los campos');
+        return;
+    }
+
+    try {
+        const response = await fetch('../routes/service/update-service.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                idServicio,
+                nombre,
+                descripcion,
+                precio,
+                idCategoria
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert('Servicio actualizado exitosamente');
+            cerrarModalEditar();
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    } catch (error) {
+        alert('Error al actualizar el servicio: ' + error.message);
+    }
+}
+
 // Cargar categorías
 async function cargarCategorias() {
     try {
-        const response = await fetch('../routes/get-categories.php');
+        const response = await fetch('../routes/service/get-categories.php');
         const data = await response.json();
         console.log(data);
-        if (data.success) {
+        if (data.success && Array.isArray(data.categorias)) {
             const select = document.getElementById('servicioCategoria');
             select.innerHTML = '<option value="">Selecciona una categoría...</option>';
-            let id = 1;
+           
             data.categorias.forEach(cat => {
                 const option = document.createElement('option');
-                option.value = id; // Usar el primer ID
+                option.value = cat.id; // Usar el primer ID
                 option.textContent = cat;
                 select.appendChild(option);
-                id++;
             });
+        }
+    } catch (error) {
+        console.error('Error al cargar categorías:', error);
+    }
+}
+
+// Cargar categorías en modal de editar
+async function cargarCategoriasEditar() {
+    try {
+        const response = await fetch('../routes/service/get-categories.php');
+        const data = await response.json();
+        
+        if (data.success && Array.isArray(data.categorias)) {
+            const select = document.getElementById('servicioCategoriEdit');
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">Selecciona una categoría...</option>';
+            
+            data.categorias.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat.id;
+                option.textContent = cat.nombre;
+                select.appendChild(option);
+            });
+            
+            // Restaurar la selección anterior
+            if (currentValue) {
+                select.value = currentValue;
+            }
         }
     } catch (error) {
         console.error('Error al cargar categorías:', error);
@@ -128,7 +247,7 @@ function cambiarTab(event) {
 
 // Logout
 function logout() {
-    fetch('../routes/logout-user.php', {
+    fetch('../routes/user/logout-user.php', {
         method: 'POST'
     })
     .then(response => response.json())
